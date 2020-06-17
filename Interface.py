@@ -12,8 +12,6 @@ from PySide2.QtGui import QIcon
 class Interface(QWidget):
     def __init__(self,stl):
         QWidget.__init__(self)
-        Icon = QIcon("Abeille_Bourbon-6455_xlarge.png")
-        self.setWindowIcon(Icon)
 
         #Partie 3D
 
@@ -48,6 +46,8 @@ class Interface(QWidget):
         self.layout = QGridLayout()
         self.setWindowTitle("Boat sinking interface")
         self.setFixedSize(1300, 800)
+        Icon = QIcon("Abeille_Bourbon-6455_xlarge.png")
+        self.setWindowIcon(Icon)
 
 
         self.button1 = QPushButton("Lancer")

@@ -1,72 +1,79 @@
 
 from PySide2.QtWidgets import *
+from PySide2.QtGui import *
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from stl import mesh
+from mpl_toolkits import mplot3d
+from matplotlib import pyplot
 
+class Figure:
+    def __init__(self,point1,point2,point3):
+        self.__point1 = point1
+        self.__point2 = point2
+        self.__point3 = point3
+figure = pyplot.figure()
+axes = mplot3d.Axes3D(figure)
+your_mesh = mesh.Mesh.from_file('Rectangular_HULL.stl')
+axes.add_collection3d(mplot3d.art3d.Poly3DCollection(your_mesh.vectors))
+scale = your_mesh.points.flatten("C")
+axes.auto_scale_xyz(scale, scale, scale)
 
-class IHM(QWidget):
-
+class Window(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-
-
-        self.setWindowTitle("Boat sinking interface")
-        self.setFixedSize(800, 600)
-
+        self.setWindowTitle("Interface Bateau")
         self.layout = QGridLayout()
+        self.setFixedSize(500,300)
+        icon = QIcon("bateau")
+        self.setWindowIcon(icon)
 
+        #Button
+        self.button_1 = QPushButton("Start simulation")
+        self.button_1.setStyleSheet("background-image: url(bateau.jpg)")
+        self.button_1.setFixedSize(450,273)
 
-        self.button1 = QPushButton("Load 3D model")
-        self.button2 = QPushButton("Load Image")
-        self.button3 = QPushButton("Compute")
-        self.label1 = QTextEdit("modele 3D")
-        self.label2 = QTextEdit("calculs")
-
-
-
-        #Varier_le_Poids
-
-        #self.txt=QTextEdit("Choix du poids :")
-        #self.setFixedSize(400,200)
-        #self.slider =QSlider()
-        #self.label=QLabel("Choix du Poids :")
-        #self.setFixedSize(400,200)
-
-        #self.layout.addWidget(self.txt,2,1,0,0)
-        #self.layout.addWidget(self.label,2,2,0,0)
-
-
-
-        #self.slider.valueChanged.connect(self.varier)
-
-
-        #self.layout.addWidget(self.slider)
-        self.layout.addWidget(self.button1,0,1,1,1)
-        self.layout.addWidget(self.button2,0,2,1,1)
-        self.layout.addWidget(self.button3,0,3,1,1)
-        self.layout.addWidget(self.label1, 2,1,2,4)
-        self.layout.addWidget(self.label2, 2,5,2,2)
-
-
-
-
-
+        self.layout.addWidget(self.button_1)
+        self.button_1.clicked.connect(self.start_simulation)
 
         self.setLayout(self.layout)
 
-#def varier(self):
-        #self.label.setValue(self.slider.value())
+    #Signaux
+    def start_simulation(self):
+        self.setFixedSize(1000,500)
 
+        self.button_1.hide()
 
+        self.button_2 = QPushButton("Exit")
+        self.layout.addWidget(self.button_2,1,8,1,1)
+        self.button_2.clicked.connect(self.exit)
 
+        #Graphique
+        self.fig2 = plt.figure()
+        self.graph = FigureCanvas(self.fig2)
+        plt.plot([1,2,3,4])
+        plt.xlabel('Calcul de la position du tirant d\'eau')
+        self.graph.draw()
+        self.layout.addWidget(self.graph,2,5,4,4)
 
+        #Figure 3D
+        self.fig = plt.figure()
+        self.canvas = FigureCanvas(self.fig)
+        axes = mplot3d.Axes3D(self.fig)
+        your_mesh = mesh.Mesh.from_file('Cylindrical_HULL.stl')
+        axes.add_collection3d(mplot3d.art3d.Poly3DCollection(your_mesh.vectors))
+        scale = your_mesh.points.flatten("C")
+        axes.auto_scale_xyz(scale, scale, scale)
+        self.canvas.draw()
+        self.layout.addWidget(self.canvas,2,0,4,4)
 
-
-
-
-
-
+    def exit(self):
+        window.close()
 
 if __name__ == "__main__":
-    app = QApplication([])
-    win =IHM()
-    win.show()
+    import sys
+    app = QApplication()
+    window = Window()
+    window.show()
     app.exec_()
+    sys.exit()

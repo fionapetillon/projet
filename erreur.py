@@ -21,7 +21,7 @@ class Erreur(QWidget) :
 
 if __name__ == "__main__":
     app = QApplication([])
-    win =Erreur()
+    winE =Erreur()
 
     app.exec_()
 
